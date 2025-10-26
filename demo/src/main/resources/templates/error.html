@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Error</title>
+</head>
+<body>
+<h1>An Error Occurred</h1>
+<!-- 使用 th:text 显示 Controller 或 Exception Handler 传递过来的错误信息 -->
+<p th:text="${error}">An unexpected error occurred(啊累累,有地方出错辣).</p>
+<br>
+<a href="/">Go back to the list of notes</a>
+</body>
+</html>
+
+<!--解释：-->
+<!--xmlns:th="http://www.thymeleaf.org": 声明 Thymeleaf 命名空间，虽然在这个简单页面中可能用不到，但加上是个好习惯。-->
+<!--<p th:text="${error}">...: Thymeleaf 会将 Model 中名为 error 的属性值替换掉 <p> 标签内的内容。-->

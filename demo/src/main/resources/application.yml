@@ -1,0 +1,33 @@
+spring:
+ application.name: demo # Set the application name
+ # MySQL 数据库配置
+ datasource:
+  url: jdbc:mysql://localhost:3306/note_app # 替换为你的数据库名
+  username: root # 替换为你的 MySQL 用户名
+  password: ssw # 替换为你的 MySQL 密码
+  driver-class-name: com.mysql.cj.jdbc.Driver
+ jpa:
+  hibernate:
+   ddl-auto: update # 开发时使用，生产环境需谨慎！
+  show-sql: true # 可选
+  properties:
+   hibernate:
+    dialect: org.hibernate.dialect.MySQLDialect # 根据你的 MySQL 版本选择,指定为MySQL 5.7 方言
+    #核心问题： Spring Boot (通过 Hibernate) 无法找到名为 org.hibernate.dialect.MySQL57Dialect 的类。
+    #
+    #原因： 从 Hibernate 6.0 开始（你的日志显示 Hibernate ORM core version 6.6.29.Final），旧版的 MySQL 方言类名被移除了或更改了。org.hibernate.dialect.MySQL57Dialect 在新版本中可能不再存在。
+    #
+    #解决方案：
+    #推荐使用 org.hibernate.dialect.MySQLDialect，
+    #它是 Hibernate 6.x 中为 MySQL 提供的通用方言，通常能很好地兼容 MySQL 5.7。
+    format_sql: true
+
+app:
+ # Custom config: Directory for storing notes (如果后端已完全迁移到数据库，此行可移除)
+ # Uses environment variable NOTES_DIR if set, otherwise defaults to 'notes'
+ notes-dir: ${NOTES_DIR:notes} # 如果完全迁移到数据库，此行可移除
+
+# Security 配置 (可选，用于快速测试)
+# security:
+#   basic:
+#     enabled: false

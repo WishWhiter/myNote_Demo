@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Editor.md 测试</title>
+    <!-- 引入 Editor.md 样式 -->
+    <link rel="stylesheet" href="/editor.md/css/editormd.min.css" />
+    <style>
+        #test-editormd { width: 90%; margin: 20px auto; }
+    </style>
+</head>
+<body>
+<div id="test-editormd">
+    <textarea style="display:none;">### Hello Editor.md!</textarea>
+</div>
+
+<!-- 引入 jQuery 和 Editor.md -->
+<script src="/jquery.min.js"></script>
+<script src="/editor.md/editormd.min.js"></script>
+<script>
+    $(function() {
+        editormd("test-editormd", {
+            path: "/editor.md/lib/",  // ⭐ 必须指向 lib 目录
+            height: 500,
+            markdown: "## 欢迎使用 Markdown 笔记！\n\n- 左侧编辑\n- 右侧预览",
+            codeFold: true,
+            saveHTMLToTextarea: true,
+            searchReplace: true,
+            htmlDecode: "style,script,iframe|on*",
+            emoji: true,
+            taskList: true,
+            tocm: true,
+            tex: true, // 支持数学公式
+            flowChart: true, // 支持流程图
+            sequenceDiagram: true // 支持时序图
+        });
+    });
+</script>
+</body>
+</html>

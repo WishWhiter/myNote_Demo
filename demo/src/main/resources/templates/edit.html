@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑笔记</title>
+    <link rel="stylesheet" href="/editor.md/css/editormd.min.css" />
+    <style>
+        #editormd { width: 90%; margin: 0 auto; }
+        .save-btn { display: block; width: 120px; margin: 20px auto; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .title-input { width: 90%; margin: 10px auto; padding: 8px; display: block; }
+    </style>
+</head>
+<body>
+<h2 style="text-align:center;">✍️ 编辑笔记</h2>
+
+<form th:action="@{/save}" method="post">
+    <!-- 隐藏的笔记 ID，用于区分新建/更新 -->
+    <input type="hidden" name="id" th:value="${noteId}" />
+    <!-- 笔记标题输入框 -->
+    <input type="text" name="title" class="title-input" th:value="${initTitle}" placeholder="笔记标题" required />
+    <!-- 用于 Editor.md 的隐藏 textarea -->
+    <textarea id="markdownContent" name="content" style="display:none;"></textarea>
+    <!-- 将原始内容放在一个隐藏的 div 中 (方案一) -->
+    <div id="init-content-holder" style="display:none;" th:text="${initContent}"></div>
+    <!-- Editor.md 容器 -->
+    <div id="editormd"></div>
+    <button type="submit" class="save-btn">💾 保存笔记</button>
+</form>
+
+<script src="/jquery.min.js"></script>
+<script src="/editor.md/editormd.min.js"></script>
+<script>
+    $(function() {
+        // 从隐藏的 div 中读取内容，这样可以避免 JavaScript 字符串转义的问题
+        var initContent = $('#init-content-holder').text();
+        console.log("Initial Content from DOM:", initContent);
+
+        var editor = editormd("editormd", {
+            path: "/editor.md/lib/",
+            height: 600,
+            saveHTMLToTextarea: false,
+            markdown: initContent, // 使用从 DOM 读取的内容
+            onchange: function() {
+                $("#markdownContent").val(this.getMarkdown());
+            }
+        });
+    });
+</script>
+</body>
+</html>

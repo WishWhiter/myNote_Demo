@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>我的笔记</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 8px 0; border-bottom: 1px solid #eee; }
+        a { text-decoration: none; color: #0066cc; }
+        .btn { display: inline-block; margin-top: 10px; padding: 8px 16px; background: #0066cc; color: white; text-decoration: none; border-radius: 4px; }
+        .delete-btn { display: inline-block; margin-left: 10px; padding: 4px 8px; background: #dc3545; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9em; }
+        .delete-btn:hover { background: #c82333; }
+    </style>
+</head>
+<body>
+<h1>📝 我的 Markdown 笔记</h1>
+<div style="position: absolute; top: 20px; right: 20px;">
+    <!-- 使用 Spring Security 的 #authentication -->
+    <span th:if="${#authentication != null and #authentication.name != null}" style="margin-right: 10px; color: #666;">
+         欢迎, <span th:text="${#authentication.name}">用户名</span>!
+     </span>
+    <!-- 登出链接 -->
+    <form th:if="${#authentication != null and #authentication.name != null}" th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" style="margin-right: 10px; color: #0066cc; text-decoration: none; background:none; border:none; cursor:pointer; padding:0;">登出</button>
+    </form>
+    <!-- 登录/注册链接 (仅在未登录时显示) -->
+    <a th:if="${#authentication == null or #authentication.name == null}" href="/login" style="margin-right: 10px; color: #0066cc; text-decoration: none;">登录</a>
+    <a th:if="${#authentication == null or #authentication.name == null}" href="/register" style="color: #0066cc; text-decoration: none;">注册</a>
+</div>
+
+<ul>
+    <li th:each="note : ${notes}">
+        <a th:href="@{/view(id=${note.id})}" th:text="${note.title}">Note Title</a>
+        |
+        <a th:href="@{/edit(id=${note.id})}">编辑</a>
+        |
+        <!-- 删除按钮 (使用 POST 表单) -->
+        <form th:action="@{/delete}" method="post" style="display:inline;">
+            <input type="hidden" name="id" th:value="${note.id}" />
+            <!-- 修改后的删除按钮：使用 th:data-title 传递标题，onclick 使用纯 JS 读取 -->
+            <!-- 确保 button 标签结构清晰，属性之间没有错误 -->
+            <button type="submit" class="delete-btn" th:data-title="${note.title}">删除</button>
+        </form>
+        <!-- 添加一个小型的 JavaScript 脚本来处理确认对话框 -->
+        <script th:inline="javascript">
+            //<![CDATA[
+            // 获取当前循环中的 note.title (安全转义后)
+            var noteTitle = /*[[${#strings.escapeJavaScript(note.title)}]]*/ '';
+            // 为当前按钮添加点击事件监听器 (使用事件委托会更高效，但这里简单处理)
+            // 注意：这段脚本在每次循环时都会执行，但只会修改当前循环生成的按钮
+            // 更好的方式是将事件监听器添加到父元素上
+            document.addEventListener('DOMContentLoaded', function() {
+                var deleteBtn = document.querySelector('form[action="/delete"] input[name="id"][value="' + /*[[${note.id}]]*/ '' + '"]').closest('form').querySelector('.delete-btn');
+                if (deleteBtn) {
+                    deleteBtn.onclick = function(event) {
+                        // 阻止表单默认提交
+                        event.preventDefault();
+                        // 显示确认对话框
+                        if (confirm('确定删除笔记 "' + noteTitle + '" 吗？')) {
+                            // 如果确认，则提交表单
+                            this.closest('form').submit();
+                        }
+                        // 如果取消，则不执行任何操作
+                    };
+                }
+            });
+            //]]>
+        </script>
+    </li>
+    <li th:if="${#lists.isEmpty(notes)}">暂无笔记</li>
+</ul>
+
+<!-- 新建笔记按钮：根据认证状态决定链接 -->
+<a class="btn" th:href="${#authentication != null and #authentication.name != null ? '/edit' : '/login'}">+ 新建笔记</a>
+</body>
+</html>

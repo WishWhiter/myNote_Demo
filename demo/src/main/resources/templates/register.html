@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"> <!-- 1. 添加 Thymeleaf 命名空间 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <style>
+        /* --- 保留你同学提供的 CSS 样式 --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .switch-page {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .switch-page a {
+            color: #2575fc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .switch-page a:hover {
+            text-decoration: underline;
+        }
+
+        /* 为 Thymeleaf 消息添加样式 */
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .terms {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .terms a {
+            color: #2575fc;
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>创建账户</h1>
+        <p>注册新用户账户</p>
+    </div>
+
+    <div class="form-container">
+        <!-- 2. 添加 Thymeleaf 代码来显示错误消息 (例如用户名已存在) -->
+        <div th:if="${param.error == 'userexists'}" class="message error">
+            用户名已存在，请选择其他用户名。
+        </div>
+
+        <!-- 3. 修改 form 标签，使用 Thymeleaf 的 th:action 指向 Spring Boot 的注册处理路径 -->
+        <form th:action="@{/register}" method="post"> <!-- Spring Boot 的 AuthController 会处理 POST /register -->
+            <div class="input-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required> <!-- name="username" -->
+            </div>
+
+            <!-- 4. 移除 email 输入框 (后端 AuthController 目前只处理 username 和 password) -->
+            <!-- <div class="input-group">
+                <label for="email">电子邮箱</label>
+                <input type="email" id="email" name="email" required>
+            </div> -->
+
+            <div class="input-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required> <!-- name="password" -->
+            </div>
+
+            <div class="input-group">
+                <label for="confirmPassword">确认密码</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required> <!-- name="confirmPassword" -->
+            </div>
+
+            <button type="submit" class="btn">注册</button>
+        </form>
+
+        <div class="switch-page">
+            已有账号？<a href="/login">立即登录</a> <!-- 5. 修改登录链接，指向 Spring Boot 的 /login 路径 -->
+        </div>
+    </div>
+</div>
+
+<!-- 引入自定义注册处理脚本 -->
+<script src="/static/register.js"></script>
+</body>
+</html>

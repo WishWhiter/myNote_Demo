@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"> <!-- 1. 添加 Thymeleaf 命名空间 -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <style>
+        /* --- 保留你同学提供的 CSS 样式 --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .switch-page {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .switch-page a {
+            color: #2575fc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .switch-page a:hover {
+            text-decoration: underline;
+        }
+
+        /* 为 Thymeleaf 消息添加样式 */
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #666;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+            color: #2575fc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>欢迎回来</h1>
+        <p>请登录您的账户</p>
+    </div>
+
+    <div class="form-container">
+        <!-- 2. 添加 Thymeleaf 代码来显示 Spring Security 提供的错误或注册成功消息 -->
+        <div th:if="${param.error}" class="message error"> <!-- 如果 URL 包含 ?error 参数，则显示错误消息 -->
+            登录失败：用户名或密码错误。
+        </div>
+        <div th:if="${param.logout}" class="message success"> <!-- 如果 URL 包含 ?logout 参数，则显示登出成功消息 -->
+            您已成功登出。
+        </div>
+        <div th:if="${param.registered}" class="message success"> <!-- 如果 URL 包含 ?registered=true 参数，则显示注册成功消息 -->
+            注册成功！请登录。
+        </div>
+
+        <!-- 3. 修改 form 标签，使用 Thymeleaf 的 th:action 指向 Spring Security 的登录处理路径 -->
+        <form th:action="@{/login}" method="post"> <!-- Spring Security 会自动处理 POST /login 请求 -->
+            <div class="input-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required> <!-- name="username" 是 Spring Security 默认查找的字段名 -->
+            </div>
+
+            <div class="input-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required> <!-- name="password" 是 Spring Security 默认查找的字段名 -->
+            </div>
+
+            <!-- 4. 移除前端 JavaScript 提交逻辑，直接使用 HTML 表单提交 -->
+            <button type="submit" class="btn">登录</button>
+        </form>
+
+        <div class="switch-page">
+            还没有账号？<a th:href="@{/register}">立即注册</a> <!-- 5. 修改注册链接，指向 Spring Boot 的 /register 路径 -->
+        </div>
+    </div>
+</div>
+
+<!-- 6. 移除或注释掉前端 JavaScript 代码，因为不再需要它来处理表单提交 -->
+<!--
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // 简单验证
+        if (!username || !password) {
+            showMessage('请输入用户名和密码', 'error');
+            return;
+        }
+
+        // 模拟API调用
+        const apiUrl = '123'; // 替换为实际API地址
+        console.log('调用登录API:', apiUrl, { username, password });
+
+        // 这里应该是实际的API调用代码
+        // fetch(apiUrl, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({ username, password })
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     if (data.success) {
+        //         showMessage('登录成功！', 'success');
+        //         // 登录成功后的操作，比如跳转页面
+        //     } else {
+        //         showMessage(data.message || '登录失败，请检查用户名和密码', 'error');
+        //     }
+        // })
+        // .catch(error => {
+        //     showMessage('网络错误，请稍后重试', 'error');
+        // });
+
+        // 模拟成功响应
+        setTimeout(() => {
+            showMessage('登录成功！', 'success');
+        }, 1000);
+    });
+
+    // 显示消息函数
+    function showMessage(message, type) {
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = message;
+        messageEl.className = 'message ' + type;
+        messageEl.style.display = 'block';
+    }
+</script>
+-->
+</body>
+</html>
